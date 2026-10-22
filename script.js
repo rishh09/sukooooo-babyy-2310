@@ -53,7 +53,7 @@ const LETTER = [
   "Is saal tumhe woh sab mile jo tum deserve karti ho — dher saari khushiyaan, bina wajah muskurane ki reasons, aur bahut saara sukoon. (Haan, Sukoo se sukoon 😌)",
   "Aur jab bhi duniya thodi heavy lage, yaad rakhna — main hamesha tumhare saath hoon. Radhe ke saath Shyam ki tarah. 🦚",
   "I love you. Aaj, kal, aur har birthday ke baad bhi.",
-  "— sirf tumhara 🤍",
+  "— sirf tumhara Rishhuu 💙",
 ];
 
 /* ---------- Toast ---------- */
