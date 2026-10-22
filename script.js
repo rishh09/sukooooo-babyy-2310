@@ -458,8 +458,8 @@ let order = PHOTOS.map((_, i) => i);
 const seen = new Set([0]);
 const cards = PHOTOS.map((photo) => {
   const fig = document.createElement("figure");
-  fig.className = "card glass";
-  fig.innerHTML = `<img src="assets/photos/${photo.src}" alt="Sukoo" loading="lazy" style="object-position:${photo.pos}" /><span class="sheen"></span><figcaption>${photo.cap}</figcaption>`;
+  fig.className = "card";
+  fig.innerHTML = `<img src="assets/photos/${photo.src}" alt="${photo.cap}" loading="lazy" style="object-position:${photo.pos}" /><span class="sheen"></span>`;
   deck.appendChild(fig);
   return fig;
 });
@@ -469,15 +469,31 @@ function layoutDeck(dragX = 0) {
     const card = cards[idx];
     card.classList.toggle("top", depth === 0);
     card.style.zIndex = String(PHOTOS.length - depth);
-    card.style.opacity = depth > 3 ? "0" : "1";
+    card.style.opacity = depth > 2 ? "0" : "1";
     if (depth === 0) {
       card.style.transform = `translateX(${dragX}px) rotate(${dragX / 16}deg) rotateX(calc(var(--ty) * -12deg)) rotateY(calc(var(--tx) * 16deg))`;
     } else {
       const side = depth % 2 ? 1 : -1;
-      card.style.transform = `translate3d(${side * depth * 8}px, ${depth * 14}px, ${-depth * 50}px) rotate(${side * depth * 3}deg)`;
+      card.style.transform = `translate3d(${side * depth * 6}px, ${depth * 10}px, ${-depth * 40}px) rotate(${side * depth * 2.5}deg)`;
     }
   });
   $("#deckCount").textContent = `${order[0] + 1} / ${PHOTOS.length}`;
+  showCaption(PHOTOS[order[0]].cap);
+}
+
+const deckCaption = $("#deckCaption");
+function showCaption(text) {
+  if (deckCaption.textContent === text) return;
+  if (!deckCaption.textContent) {
+    deckCaption.textContent = text;
+    return;
+  }
+  deckCaption.classList.add("swap");
+  clearTimeout(showCaption.timer);
+  showCaption.timer = setTimeout(() => {
+    deckCaption.textContent = text;
+    deckCaption.classList.remove("swap");
+  }, 200);
 }
 
 function markSeen() {

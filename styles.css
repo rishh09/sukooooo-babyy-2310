@@ -442,12 +442,16 @@ body:not(.locked) .hud { transform: translate(-50%, 0); }
   perspective: 1000px;
   touch-action: pan-y;
 }
+/* Solid polaroid-style cards: see-through cards let every caption and photo behind bleed through. */
 .card {
   position: absolute;
   inset: 0;
   margin: 0;
-  padding: 10px 10px 54px;
+  padding: 10px;
   border-radius: 26px;
+  background: linear-gradient(160deg, #4a2363, #2a1240);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 24px 60px rgba(8, 0, 24, 0.55);
   transform-style: preserve-3d;
   will-change: transform;
   transition: transform 520ms cubic-bezier(.2, .8, .2, 1), opacity 400ms ease;
@@ -462,20 +466,22 @@ body:not(.locked) .hud { transform: translate(-50%, 0); }
   pointer-events: none;
   -webkit-user-drag: none;
 }
-.card figcaption {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 10px;
-  font-family: var(--hand);
-  font-size: 23px;
-  font-weight: 700;
-  line-height: 1.1;
-  transform: translateZ(30px);
-}
 .card .sheen { border-radius: 26px; }
 .card.top { cursor: grab; }
 .card.dragging { transition: none; cursor: grabbing; }
+.deck-caption {
+  min-height: 2.5em;
+  max-width: min(86vw, 360px);
+  margin: 6px 0 -6px;
+  font-family: var(--hand);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(255, 92, 138, 0.55);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.deck-caption.swap { opacity: 0; transform: translateY(6px); }
 .deck-ctrl { display: flex; align-items: center; gap: 18px; font-variant-numeric: tabular-nums; color: var(--muted); }
 
 /* ---------- Game ---------- */
