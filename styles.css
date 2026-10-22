@@ -49,11 +49,11 @@ em { font-family: var(--serif); font-style: italic; font-weight: 500; }
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(38% 30% at 22% 14%, rgba(255, 92, 138, 0.55), transparent 70%),
-    radial-gradient(42% 36% at 84% 42%, rgba(107, 60, 255, 0.5), transparent 70%),
-    radial-gradient(42% 36% at 18% 84%, rgba(25, 195, 179, 0.32), transparent 70%),
-    radial-gradient(38% 30% at 84% 90%, rgba(255, 207, 107, 0.22), transparent 70%),
-    radial-gradient(120% 80% at 50% 0%, #2a0f46 0%, var(--night) 60%);
+    radial-gradient(60% 45% at 18% 12%, rgba(255, 92, 138, 0.75), transparent 75%),
+    radial-gradient(60% 50% at 88% 42%, rgba(124, 60, 255, 0.7), transparent 75%),
+    radial-gradient(60% 50% at 14% 86%, rgba(25, 195, 179, 0.45), transparent 75%),
+    radial-gradient(55% 45% at 86% 92%, rgba(255, 207, 107, 0.32), transparent 75%),
+    radial-gradient(120% 80% at 50% 0%, #3a1460 0%, #160a2c 70%);
   will-change: transform;
   animation: drift 30s ease-in-out infinite alternate;
 }
