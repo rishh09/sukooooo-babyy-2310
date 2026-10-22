@@ -6,16 +6,18 @@ const canvas = document.querySelector("#heart3d");
 const hero = document.querySelector("#hero");
 const tilt = window.sukooTilt || { x: 0, y: 0 };
 
+const isPhone = window.matchMedia("(max-width: 760px)").matches;
+const lowPower = isPhone || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: !lowPower, alpha: true, powerPreference: "low-power" });
 } catch {
   document.body.classList.add("no-webgl");
   throw new Error("WebGL unavailable");
 }
 
-const isPhone = window.matchMedia("(max-width: 760px)").matches;
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isPhone ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lowPower ? 1.25 : 1.5));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -40,30 +42,28 @@ shape.bezierCurveTo(7, 0, 5, 5, 5, 5);
 const geometry = new THREE.ExtrudeGeometry(shape, {
   depth: 3.2,
   bevelEnabled: true,
-  bevelSegments: isPhone ? 10 : 16,
+  bevelSegments: lowPower ? 5 : 8,
   bevelSize: 2.4,
   bevelThickness: 2.6,
-  curveSegments: isPhone ? 36 : 56,
+  curveSegments: lowPower ? 22 : 32,
 });
 geometry.center();
 geometry.rotateZ(Math.PI);
 geometry.scale(0.12, 0.12, 0.12);
 geometry.computeVertexNormals();
 
+// Candy-glass look without `transmission`, which would render the whole scene a second time every frame.
 const glass = new THREE.MeshPhysicalMaterial({
-  color: new THREE.Color("#ffd1e3"),
-  metalness: 0,
-  roughness: 0.06,
-  transmission: 1,
-  thickness: 1.4,
-  ior: 1.5,
-  iridescence: 0.7,
-  iridescenceIOR: 1.35,
+  color: new THREE.Color("#ff8db5"),
+  metalness: 0.05,
+  roughness: 0.08,
+  transparent: true,
+  opacity: 0.82,
+  iridescence: 0.6,
+  iridescenceIOR: 1.3,
   clearcoat: 1,
   clearcoatRoughness: 0.04,
-  attenuationColor: new THREE.Color("#ff4f8b"),
-  attenuationDistance: 3.5,
-  envMapIntensity: 1.4,
+  envMapIntensity: 1.6,
 });
 
 const heart = new THREE.Mesh(geometry, glass);
@@ -72,15 +72,16 @@ scene.add(heart);
 
 /* Small glass hearts drifting around, plus glowing orbs behind for the glass to refract */
 const minis = [];
-const miniGlass = glass.clone();
-miniGlass.attenuationColor = new THREE.Color("#c13cff");
-for (let i = 0; i < (isPhone ? 5 : 8); i += 1) {
-  const m = new THREE.Mesh(geometry, i % 2 ? glass : miniGlass);
+const miniCount = lowPower ? 3 : 5;
+const miniGlass = new THREE.MeshStandardMaterial({ color: "#e7a3ff", metalness: 0.1, roughness: 0.12, transparent: true, opacity: 0.75, envMapIntensity: 1.5 });
+const miniPink = new THREE.MeshStandardMaterial({ color: "#ffb3cd", metalness: 0.1, roughness: 0.12, transparent: true, opacity: 0.75, envMapIntensity: 1.5 });
+for (let i = 0; i < miniCount; i += 1) {
+  const m = new THREE.Mesh(geometry, i % 2 ? miniPink : miniGlass);
   const s = 0.18 + Math.random() * 0.16;
   m.scale.setScalar(s);
   m.userData = {
     r: 2.6 + Math.random() * 1.6,
-    a: (i / (isPhone ? 5 : 8)) * Math.PI * 2,
+    a: (i / miniCount) * Math.PI * 2,
     y: (Math.random() - 0.5) * 3.2 + 0.9,
     speed: 0.15 + Math.random() * 0.2,
     spin: (Math.random() - 0.5) * 1.5,
@@ -92,7 +93,7 @@ for (let i = 0; i < (isPhone ? 5 : 8); i += 1) {
 const orbColors = ["#ff5c8a", "#ffcf6b", "#19c3b3", "#c13cff", "#2b6bff", "#ff8fb1"];
 const orbs = orbColors.map((c, i) => {
   const orb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.22, 24, 24),
+    new THREE.SphereGeometry(0.22, 12, 12),
     new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(1.6) })
   );
   orb.userData = { a: (i / orbColors.length) * Math.PI * 2, r: 1.7 };
@@ -167,10 +168,17 @@ canvas.addEventListener("pointercancel", () => { spin.drag = null; });
 let visible = true;
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
 
+// Phones draw at ~30fps: the heart moves slowly, so it looks the same at half the battery and heat.
 const clock = new THREE.Clock();
+const frameGap = lowPower ? 1 / 31 : 0;
+let sinceDraw = 0;
 renderer.setAnimationLoop(() => {
+  const delta = clock.getDelta();
   if (!visible) return;
-  const dt = Math.min(clock.getDelta(), 0.05);
+  sinceDraw += delta;
+  if (sinceDraw < frameGap) return;
+  const dt = Math.min(sinceDraw, 0.05);
+  sinceDraw = 0;
   const t = clock.elapsedTime;
 
   spin.extraY += spin.vy;

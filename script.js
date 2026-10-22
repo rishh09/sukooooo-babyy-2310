@@ -102,11 +102,23 @@ window.addEventListener("deviceorientation", (e) => {
   tilt.tx = clamp(e.gamma / 28, -1, 1);
   tilt.ty = clamp((e.beta - 45) / 28, -1, 1);
 });
+// Only the gate card and the photo deck react to tilt, so write the CSS vars on those alone (never on
+// :root, which would restyle the whole page every frame), only while on screen, and only when it moved.
+const tiltTargets = new Set();
+const tiltWatcher = new IntersectionObserver((entries) =>
+  entries.forEach((en) => (en.isIntersecting ? tiltTargets.add(en.target) : tiltTargets.delete(en.target)))
+);
 (function tiltLoop() {
-  tilt.x += (tilt.tx - tilt.x) * 0.08;
-  tilt.y += (tilt.ty - tilt.y) * 0.08;
-  document.documentElement.style.setProperty("--tx", tilt.x.toFixed(3));
-  document.documentElement.style.setProperty("--ty", tilt.y.toFixed(3));
+  const dx = (tilt.tx - tilt.x) * 0.08;
+  const dy = (tilt.ty - tilt.y) * 0.08;
+  if (Math.abs(dx) + Math.abs(dy) > 0.001) {
+    tilt.x += dx;
+    tilt.y += dy;
+    tiltTargets.forEach((el) => {
+      el.style.setProperty("--tx", tilt.x.toFixed(3));
+      el.style.setProperty("--ty", tilt.y.toFixed(3));
+    });
+  }
   requestAnimationFrame(tiltLoop);
 })();
 
@@ -118,7 +130,7 @@ let parts = [];
 let fxFrame = null;
 
 function sizeFx() {
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
   fx.width = window.innerWidth * ratio;
   fx.height = window.innerHeight * ratio;
   fctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -159,7 +171,7 @@ function fireworks(count = 6) {
 }
 
 function explode(p) {
-  const n = reduceMotion ? 24 : 70;
+  const n = reduceMotion ? 24 : 50;
   const heartShape = Math.random() < 0.35;
   for (let i = 0; i < n; i += 1) {
     const t = (i / n) * Math.PI * 2;
@@ -216,9 +228,13 @@ function tickFx() {
     } else if (p.type === "confetti") {
       fctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size * 0.5);
     } else {
+      // A faint wide dot under a bright core fakes the glow; canvas shadowBlur is far too slow here.
       fctx.globalCompositeOperation = "lighter";
-      fctx.shadowBlur = 12;
-      fctx.shadowColor = p.color;
+      fctx.globalAlpha *= 0.25;
+      fctx.beginPath();
+      fctx.arc(0, 0, p.size * 3, 0, Math.PI * 2);
+      fctx.fill();
+      fctx.globalAlpha *= 4;
       fctx.beginPath();
       fctx.arc(0, 0, p.size, 0, Math.PI * 2);
       fctx.fill();
@@ -371,7 +387,10 @@ function updateGate() {
     const m = Math.floor((d / 60000) % 60);
     const s = Math.floor((d / 1000) % 60);
     el.innerHTML = `your birthday begins in<b>${h ? `${h}h ` : ""}${pad(m)}m ${pad(s)}s</b>`;
-    $(".sub").innerHTML = 'babyy, you\'re turning <b class="chip">21</b> ✨';
+    if (!updateGate.turning) {
+      updateGate.turning = true;
+      $(".sub").innerHTML = 'babyy, you\'re turning <b class="chip">21</b> ✨';
+    }
   } else if (now < DAY_AFTER) {
     el.innerHTML = "it's officially<b>your day 🎂</b>";
   } else {
@@ -527,6 +546,8 @@ deck.addEventListener("pointercancel", () => { if (drag) { cards[order[0]].class
 $("#nextCard").addEventListener("click", () => flick(1));
 $("#prevCard").addEventListener("click", back);
 layoutDeck();
+tiltWatcher.observe($("#gate"));
+tiltWatcher.observe(deck);
 
 /* ---------- Kiss game ---------- */
 const arena = $("#arena");
@@ -822,11 +843,13 @@ ringPhotos.forEach((src, i) => {
 });
 const spin = { angle: 0, vel: 0.25, drag: null, visible: false };
 (function spinLoop() {
-  if (spin.visible && !spin.drag) {
-    spin.vel += (0.25 - spin.vel) * 0.02;
-    spin.angle += spin.vel;
+  if (spin.visible) {
+    if (!spin.drag) {
+      spin.vel += (0.25 - spin.vel) * 0.02;
+      spin.angle += spin.vel;
+    }
+    ring.style.transform = `rotateX(${-6 + tilt.y * 8}deg) rotateY(${spin.angle}deg)`;
   }
-  ring.style.transform = `rotateX(${-6 + tilt.y * 8}deg) rotateY(${spin.angle}deg)`;
   requestAnimationFrame(spinLoop);
 })();
 const stage = $("#ringStage");
