@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0618" />
+    <meta name="description" content="Happy 21st Birthday, Sukooooo babyy — a little universe made only for you." />
+    <meta property="og:title" content="Happy Birthday, Sukooooo babyy 🤍" />
+    <meta property="og:description" content="Someone made a whole little universe just for you. Tap to open." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://rishh09.github.io/sukooooo-babyy-2310/assets/photos/kisses.jpg" />
+    <title>For my Sukooooo babyy 🤍</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,500;1,700&family=Tiro+Devanagari+Hindi&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body class="locked">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="stars" aria-hidden="true"></div>
+    <canvas id="fx" aria-hidden="true"></canvas>
+
+    <!-- Opening gate -->
+    <div class="gate" id="gate">
+      <div class="gate-card glass tilt" data-tilt>
+        <span class="sheen" aria-hidden="true"></span>
+        <p class="eyebrow">psst… ek secret hai</p>
+        <h1 class="gate-title">For my<br /><span class="script">Sukooooo babyy</span></h1>
+        <div class="gate-count" id="gateCount" aria-live="polite"></div>
+        <button class="heart-btn" id="openBtn" type="button" aria-label="Open your surprise">
+          <svg viewBox="0 0 100 90" aria-hidden="true">
+            <defs>
+              <linearGradient id="gHeart" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffd6e7" stop-opacity=".95" />
+                <stop offset=".5" stop-color="#ff5c8a" stop-opacity=".75" />
+                <stop offset="1" stop-color="#b03cff" stop-opacity=".85" />
+              </linearGradient>
+            </defs>
+            <path class="heart-path" d="M50 88 C20 65 0 48 0 26 C0 11 12 0 26 0 C37 0 45 6 50 15 C55 6 63 0 74 0 C88 0 100 11 100 26 C100 48 80 65 50 88 Z" fill="url(#gHeart)" />
+            <path d="M20 14 C14 16 10 22 11 30" stroke="#fff" stroke-opacity=".8" stroke-width="4" stroke-linecap="round" fill="none" />
+          </svg>
+          <span>tap me</span>
+        </button>
+        <p class="gate-hint">🔊 sound on · 📱 best on your phone</p>
+      </div>
+    </div>
+
+    <!-- Floating HUD -->
+    <header class="hud glass" id="hud">
+      <div class="meter" title="Sukoo happiness meter">
+        <span aria-hidden="true">💗</span>
+        <div class="meter-track"><i id="meterFill"></i></div>
+        <b id="meterPct">0%</b>
+      </div>
+      <button class="hud-btn" id="soundBtn" type="button" aria-pressed="true" aria-label="Toggle music">♪</button>
+    </header>
+
+    <main id="site">
+      <!-- Hero -->
+      <section class="hero" id="hero">
+        <canvas id="heart3d" aria-hidden="true"></canvas>
+        <div class="heart-fallback" aria-hidden="true">💗</div>
+        <div class="hero-copy">
+          <p class="eyebrow">23 · 10 · 2005 — the day the universe made its favourite person</p>
+          <h1 class="hero-title">
+            <span class="hb">Happy Birthday</span>
+            <button class="name" id="nameBtn" type="button" aria-label="Sukoo — tap to add more o's">Suk<span id="os">ooooo</span></button>
+          </h1>
+          <p class="sub">babyy, you're <b class="chip">21</b> today ✨</p>
+          <p class="tiny">(tap your name. spin the heart. tap everything.)</p>
+        </div>
+        <a class="scroll-cue" href="#memories"><span>scroll, meri jaan</span><i></i></a>
+      </section>
+
+      <!-- Gallery -->
+      <section class="sec" id="memories">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter one</p>
+          <h2>Our little <em>gallery</em></h2>
+          <p>Swipe the cards. Tilt your phone. Every single one is my favourite.</p>
+        </header>
+        <div class="deck reveal" id="deck"></div>
+        <div class="deck-ctrl reveal">
+          <button class="glass-btn" id="prevCard" type="button" aria-label="Previous photo">←</button>
+          <span id="deckCount">1 / 7</span>
+          <button class="glass-btn" id="nextCard" type="button" aria-label="Next photo">→</button>
+        </div>
+      </section>
+
+      <!-- Kiss game -->
+      <section class="sec" id="game">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter two</p>
+          <h2>Catch <em>21 kisses</em></h2>
+          <p>Tap the kisses before they float away. Teddy = +3 🧸</p>
+        </header>
+        <div class="arena glass reveal" id="arena">
+          <div class="arena-score"><b id="kissCount">0</b><span>/21</span></div>
+          <div class="arena-start" id="arenaStart">
+            <button class="pill" id="startGame" type="button">Start catching 💋</button>
+          </div>
+          <div class="coupon" id="coupon" hidden>
+            <p class="eyebrow">unlocked</p>
+            <h3>Unlimited Kisses Coupon</h3>
+            <p>Valid forever · no expiry · no terms &amp; conditions · redeem anytime, anywhere 💌</p>
+            <button class="link-btn" id="replayGame" type="button">play again</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Radhe Shyam -->
+      <section class="sec" id="radhe">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter three</p>
+          <h2><span class="dev">राधे</span> <em>+</em> <span class="dev">श्याम</span></h2>
+          <p>Two halves. Drag them together and see what happens.</p>
+        </header>
+        <div class="merge glass reveal" id="merge">
+          <img class="merge-photo" id="mergePhoto" src="assets/photos/radhe-shyam.jpg" alt="Radhe written in henna on her wrist, Shyam tattooed on his arm" />
+          <div class="half half-l" id="halfL">
+            <svg viewBox="0 0 50 90" aria-hidden="true"><path d="M50 88 C20 65 0 48 0 26 C0 11 12 0 26 0 C37 0 45 6 50 15 Z" /></svg>
+            <span class="dev">राधे</span>
+          </div>
+          <div class="half half-r" id="halfR">
+            <svg viewBox="50 0 50 90" aria-hidden="true"><path d="M50 15 C55 6 63 0 74 0 C88 0 100 11 100 26 C100 48 80 65 50 88 Z" /></svg>
+            <span class="dev">श्याम</span>
+          </div>
+          <p class="merge-hint" id="mergeHint">← drag →</p>
+        </div>
+        <button class="link-btn reveal" id="mergeBtn" type="button">or tap here to join them ✨</button>
+        <p class="merge-line" id="mergeLine" hidden>
+          Tumhare haath pe <b>Radhe</b>, mere haath pe <b>Shyam</b> —<br />alag alag likha, par kahaani ek hi hai. 🪈🦚
+        </p>
+      </section>
+
+      <!-- Reasons jar -->
+      <section class="sec" id="jar">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter four</p>
+          <h2>21 reasons, <em>one jar</em></h2>
+          <p>One for every year of you. Tap the jar — can you open all 21?</p>
+        </header>
+        <div class="jar-wrap reveal">
+          <button class="jar" id="jarBtn" type="button" aria-label="Pull a note from the jar">
+            <span class="jar-lid"></span>
+            <span class="jar-body" id="jarBody"></span>
+            <span class="jar-label">open me</span>
+          </button>
+          <div class="note" id="note" aria-live="polite" hidden>
+            <span class="note-num" id="noteNum">#1</span>
+            <p id="noteText"></p>
+          </div>
+        </div>
+        <p class="jar-count reveal"><b id="jarCount">0</b> / 21 opened</p>
+      </section>
+
+      <!-- Cake -->
+      <section class="sec" id="cake">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter five</p>
+          <h2>Make a <em>wish</em></h2>
+          <p>Close your eyes, make a wish… then blow into your phone. (Or just tap the flames.)</p>
+        </header>
+        <div class="cake-scene reveal" id="cakeScene">
+          <div class="candles">
+            <button class="candle" type="button" aria-label="Blow out candle 2"><span class="flame"></span><b>2</b></button>
+            <button class="candle" type="button" aria-label="Blow out candle 1"><span class="flame"></span><b>1</b></button>
+          </div>
+          <div class="cake">
+            <div class="tier tier-top"><span class="drip"></span></div>
+            <div class="tier tier-bottom"><span class="cake-text">Sukoo</span></div>
+          </div>
+          <div class="plate"></div>
+        </div>
+        <button class="pill reveal" id="blowBtn" type="button">🌬️ Blow the candles</button>
+        <p class="cake-status" id="cakeStatus" aria-live="polite"></p>
+      </section>
+
+      <!-- Letter -->
+      <section class="sec" id="letter">
+        <header class="sec-head reveal">
+          <p class="eyebrow">chapter six</p>
+          <h2>Ek chhoti si <em>chitthi</em></h2>
+          <p>Sealed with love. Tap the heart to open.</p>
+        </header>
+        <div class="envelope reveal" id="envelope">
+          <div class="env-back"></div>
+          <div class="env-paper"></div>
+          <div class="env-front"></div>
+          <div class="env-flap"></div>
+          <button class="env-seal" id="sealBtn" type="button" aria-label="Open the letter">💗</button>
+        </div>
+        <article class="letter glass" id="letterCard" hidden>
+          <div id="letterText"></div>
+          <p class="letter-skip">tap to skip typing</p>
+        </article>
+      </section>
+
+      <!-- Finale -->
+      <section class="sec finale" id="finale">
+        <div class="ring-stage reveal" id="ringStage" aria-label="Spin the photo ring">
+          <div class="ring" id="ring"></div>
+        </div>
+        <h2 class="finale-title reveal">Happy 21st,<br /><span class="script">Sukooooo babyy</span></h2>
+        <p class="reveal">You've been making this world prettier for</p>
+        <div class="alive glass reveal"><b id="aliveSec">0</b><small>seconds</small></div>
+        <p class="reveal">…and I want to be there for every single second after this. 🤍</p>
+        <div class="finale-btns reveal">
+          <button class="pill" id="fireworksBtn" type="button">Fireworks 🎆</button>
+          <button class="link-btn" id="restartBtn" type="button">start over</button>
+        </div>
+        <footer class="foot">made with way too much love · only for you · 23 · 10</footer>
+      </section>
+    </main>
+
+    <div class="overflow" id="overflow" hidden>
+      <div class="overflow-card glass">
+        <p class="eyebrow">sukoo meter</p>
+        <h3>100% — overflow ho gaya 💥</h3>
+        <p>You played with everything. Ab sun lo: <b>I love you 3000, Sukooooo babyy.</b></p>
+        <button class="pill" id="overflowClose" type="button">okay okay 🙈</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+    <script type="module" src="heart.js"></script>
+  </body>
+</html>
